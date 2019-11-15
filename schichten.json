@@ -1,0 +1,24 @@
+const schichten = [
+    /*{
+        name: "[schichname]",
+        tage: [montag, dienstag, mittwoch ,donnerstag, freitag, samstag, sonntag],
+        stunden: [stundenanzahl],
+        zeit: "[zeit-string]",
+        desc: "[schichbeschreibung]"
+    }*/
+    {
+        name: "EiPuZi",
+        tage: [1,1,1,1,1,0,0],
+        stunden: 4,
+        zeit: "12.oo - 16.oo Uhr",
+        desc: "Montags Getränkebestellung, Dinstags Gastroküche gründlich putzen, Mittwoch+Freitag Einkauf (für Brunch/Frühstück, Pommes, Panini, Alk & sonstiges), Loventis checken und entsprechend Betten machen, Klos+Bäder putzen, Saugen/Wischen entsprechend Plan in Schranktür, SKK check"
+    },
+    {
+        name: 'Café',
+        tage: [1, 1, 1, 1, 1, 1, 1],
+        stunden: 5,
+        zeit: "14:oo - 19:oo Uhr",
+        anzahl: 2,
+        desc: "Loventis/Emails checken / Gäste einchecken / Kneipe-Klo-Küche putzen / Café-Betrieb, Sonntags Brunch, Fr/Sa Frühstück / Sa + So auch Pu/Zi-Aufgaben (eine Person mit WalkiTalki) → → Z-Bon(&Kassenschnitt), Kasse zählen, Kassenbuch"
+    }
+]

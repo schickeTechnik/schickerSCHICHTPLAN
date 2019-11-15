@@ -1,0 +1,501 @@
+</<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="menschen.json"></script>
+    <script type="text/javascript" src="schichten.json"></script>      
+      <script type="text/javascript" src="ext/jquery.js"></script>
+    <script type="text/javascript" src="ext/canvas.js"></script>
+  </head>
+  <style media="print">
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  body {
+    visibility:hidden;
+  }
+  .main {
+    visibility:visible;
+    margin-top: 2cm;
+    margin-bottom: 2cm;
+    margin-left: 2cm;
+    margin-right: 2cm;
+  }
+  </style>
+  <style media="screen,print">
+  </style>
+  <style media="screen">
+    body {
+      font-family:sans;
+    }
+    .main {
+      display:flex;
+      justify-content: center;
+    }
+    #message_container {
+      position: fixed;
+      top: 69px;
+      left: 0;
+      right: 0;
+      align-items: center;
+      text-align: center;
+      z-index: 99999;
+    }
+    .message {
+      margin: auto;
+      margin-bottom: 1px;
+      position: relative;
+      max-width: 100%;
+      background-color: #ffbb33;
+      border: 5px solid #ff8800;
+      border-radius: 8px;
+      padding: 5px;
+    }
+    table#menschen td {
+      width: 30px;
+    }
+    table#menschen tbody > tr {
+      background: #33b5e5;
+    }
+      td {
+        text-align: center;
+      }
+    td.blocked {
+      background: grey;
+      cursor: not-allowed;
+    }
+    input {
+      max-width: 100px;
+    }
+    input[type='number'] {
+        color: black;
+        font-size: inherit;
+        width: 100%;
+        -moz-appearance:textfield;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type=date] {
+      font-family: inherit;
+      font-size: small;
+    }
+    input[type=date]::-moz-clear {
+      display: none;
+    }
+    #screenshot_area {
+      padding: 20px;
+    }
+      input.dim, td.dim {
+          background-color: #ddd;
+      }
+      input.hghlght {
+          outline: 2px solid red;
+      }
+  </style>
+  <body>
+    <span>schichtplan laden: <input style="max-width:unset;" id="upload_backup" type="file"></input></span>
+    <button id="create_backup" href="">schichtplan speichern</button>
+    <button id="screenshot_button">bildschirmfoto</button>
+    <button id="reset_button">zurücksetzen</button>
+    <div id="screenshot_area">
+      <div class="main">
+        <table id="schichtplan">
+          <tdead>
+            <tr>
+              <th>Schicht</th>
+              <th>Stunden</th>
+              <th>Uhrzeit</th>
+              <th>Mo</th>
+              <th>Di</th>
+              <th>Mi</th>
+              <th>Do</th>
+              <th>Fr</th>
+              <th>Sa</th>
+              <th>So</th>
+              <th>Uhrzeit</th>
+            </tr>
+          </tdead>
+          <tbody id="schichten_table"></tbody>
+        </table>
+        <table id="menschen">
+          <thead>
+            <tr>
+              <th>Mensch</th>
+              <th>hat</th>
+              <th>soll</th>
+            </tr>
+          </thead>
+          <tbody id="menschen_table">
+              <!--tr>
+                <td class="name_click">Dustin</td>
+                <td><input id="dustin" type="number" disabled value="0"></td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td class="name_click">Zaky</td>
+                <td><input id="zaky" type="number" disabled value="0"></td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td class="name_click">Anscho</td>
+                <td><input id="anscho" type="number" disabled value="0"></td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <td class="name_click">Gunnar</td>
+                <td><input id="gunnar" type="number" disabled value="0"></td>
+                <td>20</td>
+              </tr>
+              <tr>
+                <td class="name_click">Luc</td>
+                <td><input id="luc" type="number" disabled value="0"></td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <td class="name_click">Oona</td>
+                <td><input id="oona" type="number" disabled value="0"></td>
+                <td>18</td>
+              </tr>
+              <tr>
+                <td class="name_click">Svantje</td>
+                <td><input id="svantje" type="number" disabled value="0"></td>
+                <td>20</td>
+              </tr>
+              <tr>
+                <td class="name_click">Ralf</td>
+                <td><input id="ralf" type="number" disabled value="0"></td>
+                <td>30</td>
+              </tr>
+              <tr>
+                <td class="name_click">Stanley</td>
+                <td><input id="stanley" type="number" disabled value="0"></input></td>
+                <td>30</td>
+              </tr>
+              <tr>
+                <td class="name_click">Telse</td>
+                <td><input id="telse" type="number" disabled value="0"></input></td>
+                <td>30</td>
+              </tr>
+              <tr>
+                <td class="name_click">Johanna</td>
+                <td><input id="johanna" type="number" disabled value="0"></input></td>
+                <td>30</td>
+              </tr>
+              <tr>
+                <td class="name_click">Zowa</td>
+                <td><input id="zowa" type="number" disabled value="0"></input></td>
+                <td>30</td>
+              </tr-->
+          </tbody>
+        </table>
+      </div>
+    <div>
+        <table id="legende">
+            <!--tr>
+                <th>ReCa</th>
+                <td>Loventis/Emails checken / Gäste einchecken / Kneipe-Klo-Küche putzen / Café-Betrieb, Sonntags Brunch, Fr/Sa Frühstück / Sa + So auch Pu/Zi-Aufgaben (eine Person mit WalkiTalki) → → Z-Bon(&Kassenschnitt), Kasse zählen, Kassenbuch
+                </td>
+            </tr>
+            <tr>
+                <th>ReBü</th>
+                <td>Loventis, Mails, Post, Ablage checken, sonst. Büroangelegenheiten, Gäste einchecken, Montags büro und personalklo putzen!
+                </td>
+            </tr>
+            <tr>
+                <th>ReKne</th>
+                <td>Loventis/Emails checken / Gäste einchecken / Kneipe-Klo-Küche putzen / Kneipen-Betrieb → → Z-Bon (&Kassenschnitt), Kasse zählen, Kassenbuch </td>
+            </tr>
+            <tr>
+                <th>EiPuZi</th>
+                <td>Montags Getränkebestellung, Dinstags Gastroküche gründlich putzen, Mittwoch+Freitag Einkauf (für Brunch/Frühstück, Pommes, Panini, Alk & sonstiges), Loventis checken und entsprechend Betten machen, Klos+Bäder putzen, Saugen/Wischen entsprechend Plan in Schranktür, SKK check</td>
+            </tr-->
+        </table>
+    </div>
+    </div>
+    <div id="message_container">
+    </div>
+  </body>
+  <script type="text/javascript">
+      const cre = function (obj) {
+    if (!obj || !obj.tag) {return null;}
+    let e = document.createElement(obj.tag);
+    
+    if (obj.con) {e.innerHTML = obj.con;}
+    if (obj.class) {e.className = obj.class;}
+    if (obj.id) {e.id = obj.id;}
+    if (obj.attr) {
+        obj.attr.map(function (fc) {
+            if (fc) {$(e).attr(fc[0], fc[1]);}
+        });
+    }
+    if (obj.tit) {e.title = obj.tit;}
+    if (obj.style) {
+        obj.style.map(function (st) {
+            $(e).css(st[0], st[1]);
+        });
+    }
+    
+    return e;
+};//create node by data-obj
+      
+      
+Number.prototype.fill = function (len) {
+    let num = String(this);
+    while(num.length < len) {
+        num = '0' + num;
+    }return num;
+};
+      
+      function init() {
+          schichten.sort(function (a, b) {
+              return Number(a.zeit.split('.')[0]) > Number(b.zeit.split('.')[0]);
+          }).map(function(obj, idx) {
+              if (!obj.anzahl) {
+                  obj.anzahl = 1;
+              }
+              if (obj.desc) {
+                $('#legende')[0].appendChild(cre({
+                    tag: 'tr',
+                    con: cre({
+                        tag: 'td',
+                        con: '<b>' + obj.name + '</b>'
+                    }).outerHTML + cre({
+                        tag: 'td',
+                        con: obj.desc
+                    }).outerHTML
+                }));
+              }
+              for (i = 0; i < obj.anzahl; i ++) {
+                  let ln = cre({
+                      tag: 'tr',
+                      con: cre({
+                          tag: 'td',
+                          con: obj.name
+                      }).outerHTML + cre({
+                          tag: 'td',
+                          con: obj.stunden,
+                          class: 'count'
+                      }).outerHTML + cre({
+                          tag: 'td',
+                          con: obj.zeit
+                      }).outerHTML
+                  });
+                  obj.tage.map(function (d, didx) {
+                      if (d) {
+                          ln.appendChild(cre({
+                              tag: 'td',
+                              class: 'editable',
+                              con: "<input class='name_input' type='text' id='i" + String(i) + idx.fill(3) + String(didx) + "' />"
+                          }));
+                      }
+                      else {
+                          ln.appendChild(cre({
+                              tag: 'td',
+                              class: 'blocked'
+                          }));
+                      }
+                  });
+                  ln.appendChild(cre({
+                      tag: 'td',
+                      con: obj.zeit
+                  }));
+                  let sec = ln.outerHTML;
+                  $('#schichten_table')[0].appendChild(ln);
+                  if (obj.doppelt) {
+                      $('#schichten_table')[0].innerHTML += sec;
+                  }
+              }
+          });//write schichten to be worked
+          
+          menschen.sort(function(a, b) {
+              return a.name > b.name;
+          }).map(function (m) {
+              $('#menschen_table')[0].appendChild(cre({
+                  tag: 'tr',
+                  con: cre({
+                      tag: 'td',
+                      class: 'name_click',
+                      con: m.name
+                  }).outerHTML + cre({
+                      tag: 'td',
+                      con: "<input disabled type='number' id='" + m.name.toLowerCase() + "' value='0' />"
+                  }).outerHTML + cre({
+                      tag: 'td',
+                      con: String(m.stunden)
+                  }).outerHTML
+              }));
+          });//write menschen who work
+      }
+    const constraitns_not_equal = [{'cells_a': ['i044', 'i046'],
+                                    'cells_b': ['i003', 'i006'],
+                                    'message': 'Freitag späte Kneipe und Samstag Frühstück...'},
+                                    {'cells_a': ['i040', 'i043'],
+                                     'cells_b': ['i003', 'i006'],
+                                     'message': 'Freitag frühe Kneipe und Samstag Frühstück...'},
+                                   {'cells_a': ['i045', 'i047'],
+                                    'cells_b': ['i004', 'i007'],
+                                    'message': 'Samstag späte Kneipe und Sonntag Brunch...'},
+                                   {'cells_a': ['i041', 'i043'],
+                                    'cells_b': ['i004', 'i007'],
+                                    'message': 'Samstag frühe Kneipe und Sonntag Brunch...'}
+                                  ]
+    function hide_flash(id,t) {
+      setTimeout(function() {
+          $('#'+id).hide(600);
+      }, t);};
+    function create_flash(m, id, t) {
+      flash = '<div id="'+id+'" class="message"><p>'+m+'</p></div>'
+      $('#message_container').append($.parseHTML(flash))
+      hide_flash(id, t)
+    };
+    function saveAs(uri, filename) {
+        var link = document.createElement('a');
+        if (typeof link.download === 'string') {
+            link.href = uri;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            window.open(uri);
+        }
+    }
+    function check_constraints() {
+      constraitns_not_equal.forEach(function(c) {
+        c['cells_a'].forEach(function(a) {
+          if ($('#' + a).val()) {
+            c['cells_b'].forEach(function(b) {
+              if ($('#' + a).val().toLowerCase().replace(/\s/g, '') === $('#' + b).val().toLowerCase().replace(/\s/g, '')) {
+                $('#' + a).parent().css({'background': '#FF8800'})
+                $('#' + b).parent().css({'background': '#FF8800'})
+                if (!$('#'+ a+b+$('#' + a).val().toLowerCase().replace(/\s/g, '')).length) {
+                  create_flash(c['message'] + ' armes ' + $('#' + a).val() + '.', a+b+$('#' + a).val().toLowerCase().replace(/\s/g, ''), 3000)
+                }
+              }
+            })
+          }
+        })
+      })
+    }
+    function load_json(path) {
+        $.getJSON("menschen.json", function(json) {
+            console.log(json); // this will show the info it in firebug console
+        });
+        
+    }
+      
+    function load_backup(file) {
+        console.log(file)
+        var reader = new FileReader();
+        reader.onload = readSuccess;
+        function readSuccess(evt) {
+            json = JSON.parse(evt.target.result);
+            for (const [key, value] of Object.entries(json)) {
+              if (key && key !== 'upload_backup') {
+                var t = '#' + key
+                $(t).val(value)
+              }
+
+            }
+        };
+        reader.readAsText(file);
+        setTimeout(function() {
+            $('input.name_input').trigger('change')
+        }, 100)
+    }
+      
+    function calchou() {
+        $('input[type=number]').each(function() {
+          this.value = 0
+        });
+        $('input.name_input').each(function() {
+          if (this.value) {
+            var wer = this.value.toLowerCase()
+            if ($('#' + wer).length) {
+              $(this).parent().css({'background':'#00C851'})
+              var stunden = parseInt($(this).parent().siblings('.count').text())
+              $('#' + wer).val(parseInt($('#' + wer).val()) + stunden)
+            } else {
+              $(this).parent().css({'background':'red'})
+            }
+          } else {
+            $(this).parent().css({'background':'unset'})
+          }
+        });
+        $('input[type=number]').trigger('change')
+        check_constraints()
+      }
+
+    $(document).ready(function() {
+        init();
+        $(window).click(function(){
+            $('input').removeClass('hghlght');
+        });
+        $('.name_click').click(function(){
+            let nam = this.innerText.toLowerCase();
+            var timo = setTimeout(function () {
+                $('input.name_input').filter(function(){return $(this).val() == nam;}).addClass('hghlght');
+            }, 300);
+        });
+        
+        $('#reset_button').click(function() {
+        $('input').each(function() {
+          this.value = null
+        })
+      })
+      $('#create_backup').click(function() {
+        var data = new Object;
+        $('input').each(function() {
+          data[this.id] = this.value
+        })
+        var json = JSON.stringify(data);
+        var blob = new Blob([json], {type: "application/json"});
+        var url  = URL.createObjectURL(blob);
+        var filename = "schichtplan_kw_" + $('#kw').val() + ".json";
+        saveAs(url, filename)
+      })
+      $('#upload_backup').change(function(e) {
+        load_backup(e.originalEvent.srcElement.files[0]);
+      })
+      $('#screenshot_button').click(function() {
+        html2canvas(document.querySelector("#screenshot_area", {'logging': false, 'width': 3508, 'height': 2480})).then(canvas => {
+            var filename = "schichtplan_kw_" + $('#kw').val() + ".png";
+            saveAs(canvas.toDataURL(), filename);
+        });
+      })
+      $('#montag').change(function() {
+        var montag = this.valueAsDate
+        var dienstag = new Date(montag.getTime() + 86400000)
+        var mittwoch = new Date(montag.getTime() + 86400000 * 2)
+        var donnerstag = new Date(montag.getTime() + 86400000 * 3)
+        var freitag = new Date(montag.getTime() + 86400000 * 4)
+        var samstag = new Date(montag.getTime() + 86400000 * 5)
+        var sonntag = new Date(montag.getTime() + 86400000 * 6)
+        $('#dienstag')[0].valueAsDate = dienstag
+        $('#mittwoch')[0].valueAsDate = mittwoch
+        $('#donnerstag')[0].valueAsDate = donnerstag
+        $('#freitag')[0].valueAsDate = freitag
+        $('#samstag')[0].valueAsDate = samstag
+        $('#sonntag')[0].valueAsDate = sonntag
+      });
+      $('input[type=number]').change(function() {
+        var soll = parseInt($(this).parent().next().text());
+        if (this.value < soll) {
+          $(this).parent().parent().css({'background': '#33b5e5'});
+        } else if (this.value > soll) {
+          $(this).parent().parent().css({'background': '#ff4444'});
+        } else {
+          $(this).parent().parent().css({'background': '#00C851'});
+        }
+      });
+      $('input.name_input').change(calchou);
+      //$('input.name_input').trigger('change');
+        calchou();
+    });
+  </script>
+</html>

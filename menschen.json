@@ -1,0 +1,14 @@
+const menschen = [
+    /*{
+        name: "[name]",
+        stunden: [stunden]
+    }*/
+    {
+        name: "Peter",
+        stunden: 20
+    },
+    {
+        name: "Maffay",
+        stunden: 15
+    }
+]
